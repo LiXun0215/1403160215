@@ -42,11 +42,12 @@ enum SortKind{
 
 
 typedef struct{
-    // 请补全结构定义
+   QStringList alldata;                                                 // 请补全结构定义
 } studData;
 
-QDebug operator<< (QDebug d, const studData &data) {
-    // 请补全运算符重载函数，使其可以直接输出studData结构
+QDebug operator<< (QDebug d, const studData &data)
+{
+                                                                        // 请补全运算符重载函数，使其可以直接输出studData结构
     return d;
 }
 
@@ -92,7 +93,35 @@ ScoreSorter::ScoreSorter(QString dataFile){
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     // 自定义qDebug
+
+
+void ScoreSorter::readFile()
+
+QFire my_file(filename);
+                                                                       //将QFILE与相关文件关联
+if(!my_file.open(QIODevice::ReadOnly | QIODevice::Text))
+
+{
+    qDebug()<<"Could not pen file for Reading ";
+return;
+}                                                                         //以只读和文本模式打开所需文件
+studData nowdata;
+    QString titile_t(my_file.readLine());
+        title = titile_t.split(" ", QString::SkipEmptyParts);
+    while(!my_file.atEnd())
+    {
+        QString str(my_file.readLine());
+        nowdata.alldata = str.split(" ", QString::SkipEmptyParts);
+        if((nowdata.alldata).last() == "\n") nowdata.alldata.removeLast();
+        if(nowdata.data.size()==0) continue;
+        data.append(nowdata);
+    }
+    mfile.close();
+    qDebug()<<title.count();                                             //关闭文件
+
 }
+
+
 
 int main()
 {
