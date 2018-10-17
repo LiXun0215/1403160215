@@ -2,6 +2,8 @@
 #include <QVector>
 #include <QTextStream>
 #include <QFile>
+#include <QCoreApplication>
+#include<QList>
 
 namespace SK {
 enum SortKind{
@@ -47,9 +49,22 @@ typedef struct{
 
 QDebug operator<< (QDebug d, const studData &data)
 {
-                                                                        // 请补全运算符重载函数，使其可以直接输出studData结构
-    return d;
-}
+    for(int i=0;i<data.alldata.size();i++)
+
+       {
+
+           d<<data.alldata.at(i);
+
+       }
+
+       qDebug()<<"";
+
+       return d;
+
+ }
+
+
+
 
 // 比较类，用于std::sort第三个参数
 class myCmp {
@@ -62,17 +77,13 @@ private:
 
 bool myCmp::operator()(const studData &d1, const studData &d2)
 {
-    bool result = false;
-    quint32 sortedColumn = 0x00000001<<currentColumn;
-    switch (sortedColumn) {
-    case SK::col01:
-    // ...
-    // 请补全运算符重载函数
-    // ...
-    //
-    }
-    return result;
+    if(d1.alldata.at (currentColumn+1)>d2.alldata.at(currentColumn+1))
 
+            return 0 ;
+
+        else
+
+            return 1;
 }
 
 
@@ -80,52 +91,118 @@ class ScoreSorter
 {
 public:
     ScoreSorter(QString dataFile);
-    // ...
-    // 请补全该类，使其实现上述要求
-    // ...
-}
+    void readFile();
+    void doSort();
+    void display();
+
+private:
+        QString filename;
+        QList <studData> data;
+        QStringList    num;
+};
+
+
+
+
+
+
+
+
+
 
 // 请补全
-ScoreSorter::ScoreSorter(QString dataFile){
+ScoreSorter::ScoreSorter(QString dataFile)
+{
+    filename=dataFile;
 }
 
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     // 自定义qDebug
+}
 
 
-void ScoreSorter::readFile()
 
-QFire my_file(filename);
-                                                                       //将QFILE与相关文件关联
-if(!my_file.open(QIODevice::ReadOnly | QIODevice::Text))
+
+
+void ScoreSorter::display()
 
 {
-    qDebug()<<"Could not pen file for Reading ";
-return;
-}                                                                         //以只读和文本模式打开所需文件
-studData nowdata;
-    QString titile_t(my_file.readLine());
-        title = titile_t.split(" ", QString::SkipEmptyParts);
-    while(!my_file.atEnd())
+
+    for(int i=0;i<data.size();i++)
+
     {
-        QString str(my_file.readLine());
-        nowdata.alldata = str.split(" ", QString::SkipEmptyParts);
-        if((nowdata.alldata).last() == "\n") nowdata.alldata.removeLast();
-        if(nowdata.data.size()==0) continue;
-        data.append(nowdata);
+
+        qDebug()<<data.at(i);
+
     }
-    mfile.close();
-    qDebug()<<title.count();                                             //关闭文件
 
 }
 
 
 
+
+
+void ScoreSorter::readFile()
+{
+ QFile my_file(filename);
+                                                                     //将QFILE与相关文件关联
+if(!my_file.open(QIODevice::ReadOnly | QIODevice::Text))
+{
+    qDebug()<<"Could not open file for Reading ";
+return;
+}                                                                         //以只读和文本模式打开所需文件
+studData nowdata;
+    QString titile_t(my_file.readLine());
+        num = titile_t.split(" ", QString::SkipEmptyParts);
+    while(!my_file.atEnd())
+    {
+        QString str(my_file.readLine());
+        nowdata.alldata = str.split(" ", QString::SkipEmptyParts);
+        if((nowdata.alldata).last() == "\n") nowdata.alldata.removeLast();
+        if(nowdata.alldata.size()==0) continue;
+        data.append(nowdata);
+    }
+    my_file.close();
+    qDebug()<<num.count();                                             //关闭文件
+
+}
+
+
+
+
+
+
+
+void ScoreSorter::doSort()
+{
+for(int j=1;j<num.count();j++)
+   {
+      myCmp cmp(j-1);                                              //左移0位开始
+      std::sort(data.begin(),data.end(),cmp);
+      qDebug()<<"当前是第"<<j<<"列排序，排序后输出为:";
+      qDebug()<<num;
+        for(int i=0;i<data.size();i++)
+          {
+                qDebug()<<data.at(i);
+
+          }
+
+     qDebug()<<"\n";
+   }
+
+
+}
+
+
+
+
+
+
 int main()
 {
-    qInstallMessageHandler(myMessageOutput);
+    //qInstallMessageHandler(myMessageOutput);
     QString datafile = "data.txt";
 
     // 如果排序后文件已存在，则删除之
@@ -137,5 +214,7 @@ int main()
     ScoreSorter s(datafile);
     s.readFile();
     s.doSort();
-    return 0;
+
+
+        return 0;
 }
