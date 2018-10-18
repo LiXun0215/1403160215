@@ -92,6 +92,7 @@ public:
     ScoreSorter(QString dataFile);
     void readFile();
     void doSort();
+    void output_file(int line);
 
 
 private:
@@ -177,18 +178,62 @@ for(int j=1;j<num.count();j++)
       std::sort(data.begin(),data.end(),cmp);
       qDebug()<<"当前是第"<<j<<"列排序，排序后输出为:";
       qDebug()<<num;
-        for(int i=0;i<data.size();i++)
+        for(int j=0;j<data.size();j++)
           {
-                qDebug()<<data.at(i);
+                qDebug()<<data.at(j);
 
           }
 
      qDebug()<<"\n";
+     output_file(j);
+
    }
 
 
-}
 
+
+}
+void ScoreSorter::output_file(int line)
+
+{
+
+    QFile file("G:/study/1403160215/1403160215/homework02/sorteddata.txt");
+
+    file.open(QIODevice::ReadWrite | QIODevice::Append);
+
+    QTextStream stream(&file);
+
+    stream.setCodec("UTF-8");
+
+    stream<<QString("排序后输出，当前排序第").toUtf8()<<line <<QString(" 列：").toUtf8()<<"\n";
+
+    for(int i=0;i<num.count();i++)
+
+        stream<<num.at(i)<<"\t";
+
+    stream<<'\n';
+
+    //输出数据
+
+    for(int i=0;i<data.count();i++)
+
+    {
+
+        for(int j=0;j<num.count()-1;j++)
+
+        {
+
+            stream<<data.at(i).alldata.at(j)<<"\t"<<"\t";
+
+        }
+
+        stream<<"\n";
+
+    }
+
+    file.close();
+
+}
 
 
 
@@ -197,10 +242,10 @@ for(int j=1;j<num.count();j++)
 int main()
 {
     //qInstallMessageHandler(myMessageOutput);
-    QString datafile = "C:/Users/Lixun/Desktop/build-homework02-Desktop_Qt_5_9_3_MinGW_32bit-Debug/debug/data.txt";
+    QString datafile = "G:/study/1403160215/1403160215/homework02/data.txt";
 
     // 如果排序后文件已存在，则删除之
-    QFile f("sorted_"+datafile);
+    QFile f("G:/study/1403160215/1403160215/homework02/sorteddata.txt");
     if (f.exists())
     {
         f.remove();
@@ -209,6 +254,6 @@ int main()
     ScoreSorter s(datafile);
     s.readFile();
     s.doSort();
-
+    char stop=getchar();
         return 0;
 }
