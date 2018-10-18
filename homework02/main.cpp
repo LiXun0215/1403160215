@@ -3,7 +3,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QCoreApplication>
-#include<QList>
+#include <QList>
 
 namespace SK {
 enum SortKind{
@@ -44,17 +44,16 @@ enum SortKind{
 
 
 typedef struct{
-   QStringList alldata;                                                 // 请补全结构定义
+   QStringList alldata;                                                 // 补全结构定义
 } studData;
 
-QDebug operator<< (QDebug d, const studData &data)
+QDebug operator<< (QDebug d, const studData &data)                      //定义重载函数
 {
     for(int i=0;i<data.alldata.size();i++)
 
        {
 
-           d<<data.alldata.at(i);
-
+           d.noquote()<<data.alldata.at(i);
        }
 
        qDebug()<<"";
@@ -87,18 +86,19 @@ bool myCmp::operator()(const studData &d1, const studData &d2)
 }
 
 
-class ScoreSorter
+class ScoreSorter                                                                  //新建分数排序类
 {
 public:
     ScoreSorter(QString dataFile);
     void readFile();
     void doSort();
-    void display();
+
 
 private:
         QString filename;
         QList <studData> data;
         QStringList    num;
+        studData list;
 };
 
 
@@ -117,65 +117,59 @@ ScoreSorter::ScoreSorter(QString dataFile)
 }
 
 
-void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-{
+//void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+
     // 自定义qDebug
+
+
+
+
+
+
+
+
+
+
+
+void ScoreSorter::readFile()                                                        //读文件函数
+
+ {
+
+     QFile File(filename);
+
+     if(!File.open(QIODevice::ReadOnly | QIODevice::Text))                           //以只读方式读取文件
+     {
+
+             qDebug()<<"无法打开文件"<<endl;
+     }
+
+
+
+     QString num_t(File.readLine());
+
+         num = num_t.split(" ", QString::SkipEmptyParts);
+
+     while(!File.atEnd())
+     {
+
+         QString str(File.readLine());
+
+         list.alldata = str.split(" ", QString::SkipEmptyParts);
+
+         if((list.alldata).last() == "\n") list.alldata.removeLast();
+
+         if(list.alldata.size()==0) continue;
+
+         data.append(list);
+
+     }
+     File.close();
 }
 
 
 
 
-
-void ScoreSorter::display()
-
-{
-
-    for(int i=0;i<data.size();i++)
-
-    {
-
-        qDebug()<<data.at(i);
-
-    }
-
-}
-
-
-
-
-
-void ScoreSorter::readFile()
-{
- QFile my_file(filename);
-                                                                     //将QFILE与相关文件关联
-if(!my_file.open(QIODevice::ReadOnly | QIODevice::Text))
-{
-    qDebug()<<"Could not open file for Reading ";
-return;
-}                                                                         //以只读和文本模式打开所需文件
-studData nowdata;
-    QString titile_t(my_file.readLine());
-        num = titile_t.split(" ", QString::SkipEmptyParts);
-    while(!my_file.atEnd())
-    {
-        QString str(my_file.readLine());
-        nowdata.alldata = str.split(" ", QString::SkipEmptyParts);
-        if((nowdata.alldata).last() == "\n") nowdata.alldata.removeLast();
-        if(nowdata.alldata.size()==0) continue;
-        data.append(nowdata);
-    }
-    my_file.close();
-    qDebug()<<num.count();                                             //关闭文件
-
-}
-
-
-
-
-
-
-
-void ScoreSorter::doSort()
+void ScoreSorter::doSort()                                        //定义排序函数
 {
 for(int j=1;j<num.count();j++)
    {
@@ -203,18 +197,18 @@ for(int j=1;j<num.count();j++)
 int main()
 {
     //qInstallMessageHandler(myMessageOutput);
-    QString datafile = "data.txt";
+    QString datafile = "C:/Users/Lixun/Desktop/build-homework02-Desktop_Qt_5_9_3_MinGW_32bit-Debug/debug/data.txt";
 
     // 如果排序后文件已存在，则删除之
     QFile f("sorted_"+datafile);
-    if (f.exists()){
+    if (f.exists())
+    {
         f.remove();
     }
 
     ScoreSorter s(datafile);
     s.readFile();
     s.doSort();
-
 
         return 0;
 }
