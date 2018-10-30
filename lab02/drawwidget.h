@@ -19,7 +19,7 @@
      ST::ShapeType shapeType();
      void setDrawnText(QString text);
 
-
+      QString FileName="C:/Users/Lixun/Desktop";
  protected:
      void mousePressEvent (QMouseEvent *e);
      void mouseMoveEvent (QMouseEvent *e);
@@ -47,6 +47,7 @@
      QColor color;
      ST::ShapeType drawType;
      QString drawnText;
+
  };
  #endif // DRAWWIDGET_H
 

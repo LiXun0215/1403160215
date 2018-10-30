@@ -9,6 +9,7 @@
   #include <QGridLayout>
   #include <QLineEdit>
   #include <QDebug>
+  #include <QFileDialog>
 
   CenterFrame::CenterFrame(QWidget *parent) : QFrame(parent)
   {
@@ -27,12 +28,12 @@
   void CenterFrame::createUserCommandArea()
   {
 
-      // 选项Group
+      //选项Group
       group = new QGroupBox(this);
       group->setTitle(tr("选项"));
-
       int btnWidth=32;
       int btnHeight=32;
+
       // 准备绘制按钮图标
       QPixmap p(btnWidth-2, btnHeight-2);
       QPainter painter(&p);
@@ -118,39 +119,42 @@
 
       // 菱形按钮
 
-          btnDiamond = new QPushButton(group);
+        btnDiamond = new QPushButton(group);
+        btnDiamond->setToolTip("绘制菱形");
+        btnDiamond->setCheckable(true);
+        btnDiamond->setIconSize(p.size());
 
-          btnDiamond->setToolTip("绘制菱形");
-
-          btnDiamond->setCheckable(true);
-
-          btnDiamond->setIconSize(p.size());
-
-
-
-          p.fill(BACKGROUND_COLOR);
-
-          connect(btnDiamond,&QPushButton::clicked,
-
-                  this,&CenterFrame::on_btnDiamondClicked);
+        p.fill(BACKGROUND_COLOR);
+        connect(btnDiamond,&QPushButton::clicked,
+        this,&CenterFrame::on_btnDiamondClicked);
 
           QPointF pp1(3,p.size().height()/2);
-
           QPointF pp2(p.size().width()/2,1);
-
           QPointF pp3(p.size().width()-3,p.size().height()/2);
-
           QPointF pp4(p.size().width()/2,p.size().height()-1);
-
           QVector<QPointF> pps;
-
           pps<<pp1<<pp2<<pp2<<pp3<<pp3<<pp4<<pp4<<pp1;
-
           painter.drawPolygon(pps);
-
           btnDiamond->setIcon (QIcon(p));
 
+      //图片按钮
+
+         btnGetPic = new QPushButton(group);
+         btnGetPic->setToolTip("添加图片");
+         btnGetPic->setCheckable(true);
+         btnGetPic->setIconSize(p.size());
+
+           p.fill(FOREGROUND_COLOR);
+        QImage image(":/QQQQ");
+        QRect targetRect(0,0,p.size().width(),p.size().height());
+        QRect sourceRect =image.rect();
+        painter.drawImage(targetRect,image,sourceRect);
+        btnGetPic->setIcon (QIcon(p));
+        connect(btnGetPic,&QPushButton::clicked,this, &CenterFrame::on_btnGetPicClicked);
+
+
       // 选项Group布局
+
       QGridLayout *gridLayout = new QGridLayout();
       gridLayout->addWidget(btnRect,0,0);
       gridLayout->addWidget(btnEllipse,0,1);
@@ -158,6 +162,7 @@
       gridLayout->addWidget(btnLine,1,1);
       gridLayout->addWidget(btnText,2,0);
        gridLayout->addWidget(btnDiamond,2,1);
+       gridLayout->addWidget(btnGetPic,3,0);
       gridLayout->setMargin(3);
 
       gridLayout->setSpacing(3);
@@ -248,6 +253,7 @@
       case ST::Triangle:
           btnTriangle->setChecked(true);
           break;
+
       case ST::Text:
           btnText->setChecked(true);
           edtText->setVisible(true);      // 使编辑框可见
@@ -323,21 +329,16 @@
   }
 
 
-
+                                                                        //定义菱形按钮槽函数
   void CenterFrame::on_btnDiamondClicked()
-
-  {
-
-      if(btnDiamond->isChecked()){
-
-          drawWidget->setShapeType(ST::Diamond);
-
-          updateButtonStatus();
-
-      }else{
-
-          drawWidget->setShapeType(ST::None);
-
+ {
+    if(btnDiamond->isChecked()){
+    drawWidget->setShapeType(ST::Diamond);
+    updateButtonStatus();
+    }
+    else
+     {
+        drawWidget->setShapeType(ST::None);
       }
 
   }
@@ -354,6 +355,35 @@
           drawWidget->setShapeType(ST::None);
       }
   }
+
+
+
+
+                                                                         //定义图片按钮槽函数
+   void CenterFrame::on_btnGetPicClicked()
+    {
+        drawWidget->FileName=QFileDialog::getOpenFileName(this,"选取文件",
+
+               "C:/Users/Lixun/Desktop",                                 //图片选取的起始路径
+
+               "All Files (*);;"
+               "Image Files(*.png);;"
+               "Image Files(*.jpg);;"
+               "Image Files(*.jpg)");                                    //设置图片文件扩展名过滤
+      if(btnGetPic->isChecked())
+      {
+            drawWidget->setShapeType(ST::Pic);
+            updateButtonStatus();
+        }
+      else
+      {
+        drawWidget->setShapeType(ST::None);
+         }
+
+   }
+
+
+
   void CenterFrame::on_edtTextEdited(const QString &text)
   {
       drawWidget->setDrawnText(text);

@@ -1,3 +1,5 @@
 <RCC>
-    <qresource prefix="/"/>
+    <qresource prefix="/">
+        <file alias="QQQQ">C:/Users/Lixun/Desktop/QQ图片20181029171310.png</file>
+    </qresource>
 </RCC>

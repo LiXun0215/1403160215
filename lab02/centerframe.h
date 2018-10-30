@@ -42,6 +42,7 @@
       void on_btnTriangleClicked();
       void on_btnTextClicked();
       void on_btnDiamondClicked();
+      void on_btnGetPicClicked();
       void on_edtTextEdited(const QString &text);
 
 
@@ -56,6 +57,7 @@
       QPushButton* btnTriangle;
       QPushButton* btnText;
       QPushButton* btnDiamond;
+      QPushButton* btnGetPic;
       QLineEdit* edtText;
 
 
