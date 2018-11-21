@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-QT		+= charts network
+QT += core gui
+QT += charts network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = exer03
+TARGET = protect3
 TEMPLATE = app
 
 
@@ -22,4 +22,5 @@ HEADERS  += mainwidget.h \
 
 FORMS    += mainwidget.ui
 
-RC_ICONS = logo.ico
+
+
